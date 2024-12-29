@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock title %}
+{% block content %}
+  <section style="background-color: #eee;">
+    {% for row in all_data %}
+      {% if row.type == 'boxes' %}
+        <div class="row ms-4">
+          {% for box in row.boxes %}
+            <div class="card me-3 my-3" style="width: 313px;">
+              <h5 class="text-center mt-2">{{ box.category.category_name }}</h5><hr class="mt-0">
+              <div class="row">
+                {% for product in box.products %}
+                  <div class="card-body w-50">
+                    <img src="{{ product.product_image.url }}" class="card-img-top" height="120" alt="Product Image">
+                    <h6 class="text-center">{{ product.sub_category.sub_category_name }}</h6>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if row.type == 'slide' %}
+        <div id="carouselExampleIndicators{{ forloop.counter }}" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators{{ forloop.counter }}" data-bs-slide-to="0" class="active bg-dark mt-5" aria-current="true" aria-label="Slide 1"></button>
+            {% for i in row.slide_range %}
+              <button type="button" data-bs-target="#carouselExampleIndicators{{ forloop.counter }}"  data-bs-slide-to="{{ i }}"  class="bg-dark mt-5" aria-label="Slide {{ i }}"></button>
+            {% endfor %}
+          </div>
+          <div class="carousel-inner m-auto" style="width: 96%;">
+            <h4 style="width: 100%;" class="m-auto text-center bg-light p-2">{{ row.category.category_name }} <hr class="bg-light"></h4>
+            {% for batch in row.product_batches %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="row">
+                  {% for product in batch %}
+                    <div class="bg-light p-0" style="width: 262px;">
+                      <img src="{{ product.product_image.url }}" width="100%" height="250" alt="Product Image">
+                      <h5 class="text-center">{{ product.sub_category.sub_category_name }}</h5>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators{{ forloop.counter }}" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon btn btn-dark" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators{{ forloop.counter }}" data-bs-slide="next">
+            <span class="carousel-control-next-icon btn btn-dark" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </section>
+{% endblock content %}
