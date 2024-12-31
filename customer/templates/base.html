@@ -7,13 +7,14 @@
   <link rel="stylesheet" href="{% static 'layout/bootstrap/css/b.css' %}">
   <link rel="stylesheet" href="{% static 'layout/css/layout.css' %}">
   <link rel="stylesheet" href="{% static 'styles/css/style.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <title>Shopix | {% block title %}{% endblock title %}</title>
 </head>
 <body>
   <nav class="navbar navbar-expand bg-dark">
     <div class="container-fluid">
-      <a class="ca-btn btn-sm btn btn-dark border-white" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample"><strong class="fs-5">CA</strong><span class="navbar-toggler-icon"></span></a>
-      <a class="navbar-brand text-light ms-md-2" href="{% url 'home' %}">Shopix</a>
+      <a class="ca-btn btn-sm btn btn-dark border-white" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample"><span class="navbar-toggler-icon"></span></a>
+      <a class="navbar-brand text-light ms-md-2" href="{% url 'dashboard' %}">{{ web_name }}</a>
       <div class="navbar-collapse">
         <ul class="navbar-nav mb-lg-0 w-100">
           <li class="nav-item mx-2"><a href="#" class="nav-link position-relative"><i class="fa-solid fa-cart-shopping text-info fa-lg"></i><span class="translate-middle badge rounded-pill bg-danger p-1 rounded-circle">4</span></a></li>
@@ -35,62 +36,40 @@
       </div>
     </div>
   </nav>
-
-  <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="{% static 'images/b1.jpg' %}" class="d-block w-100" height="450" alt="...">
-      </div>
-      <div class="carousel-item">
-        <img src="{% static 'images/b1.jpg' %}" class="d-block w-100" height="450" alt="...">
-      </div>
-      <div class="carousel-item">
-        <img src="{% static 'images/b1.jpg' %}" class="d-block w-100" height="450" alt="...">
-      </div>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon btn btn-dark" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-      <span class="carousel-control-next-icon btn btn-dark" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
+  {% block banner %}{% endblock  %}
+<div class="offcanvas offcanvas-start w-25" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="off-header">
+      <button type="button" class="btn-close float-end m-2 border fs-5" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <h4 class="offcanvas-title text-center mt-1" id="offcanvasExampleLabel">CATEGORIES</h4>
   </div>
-
-  <div class="offcanvas offcanvas-start w-25" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-    <div class="off-header">
-        <button type="button" class="btn-close float-end m-2 border fs-5" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        <h4 class="offcanvas-title text-center mt-1" id="offcanvasExampleLabel">CATEGORIES</h4>
-    </div>
-    <div class="offcanvas-body">
-        <div class="accordion accordion-flush" id="accordionFlushExample">
-            {% for category in categories %}
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" 
-                            type="button" 
-                            data-bs-toggle="collapse" 
-                            data-bs-target="#flush-collapse{{ forloop.counter }}" 
-                            aria-expanded="false" 
-                            aria-controls="flush-collapse{{ forloop.counter }}">
-                        {{ category.category_name }}
-                    </button>
-                </h2>
-                <div id="flush-collapse{{ forloop.counter }}" 
-                     class="accordion-collapse collapse" 
-                     data-bs-parent="#accordionFlushExample">
-                    <div class="accordion-body">
-                      {% for sub_category in category.subcategory_set.all %}
-                        <p>{{ sub_category.sub_category_name }}</p>
-                      {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+  <div class="offcanvas-body">
+      <div class="accordion accordion-flush" id="accordionFlushExample">
+          {% for category in categories %}
+          <div class="accordion-item {% if forloop.counter > 4 %}hidden-category{% endif %}">
+              <h2 class="accordion-header">
+                  <a class="accordion-button collapsed text-decoration-none text-dark" 
+                          type="button" 
+                          data-bs-toggle="collapse" 
+                          data-bs-target="#flush-collapse{{ forloop.counter }}" 
+                          aria-expanded="false" 
+                          aria-controls="flush-collapse{{ forloop.counter }}">
+                      {{ category.category_name }}
+                  </a>
+              </h2>
+              <div id="flush-collapse{{ forloop.counter }}" 
+                  class="accordion-collapse collapse" 
+                  data-bs-parent="#accordionFlushExample">
+                  {% for sub_category in category.subcategory_set.all %}
+                    <a href="{% url 'cat_products' sub_category.sub_category_name %}" class="sub-ca-btn form-control border-0 text-dark text-decoration-none">{{ sub_category.sub_category_name }}</a>
+                  {% endfor %}
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+      <a id="toggleCategories" class="text-dark text-decoration-none w-100 sub-ca-btn" type="button"><strong>See All</strong> <b><i class="bi bi-chevron-down"></i></b></a>
+  </div>
 </div>
+
   {% block content %}{% endblock content %}
   <script src="{% static 'layout/bootstrap/js/b.js' %}"></script>
   <script src="{% static 'layout/js/jquery.js' %}"></script>

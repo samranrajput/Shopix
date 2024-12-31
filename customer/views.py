@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from math import ceil
 from administrator.models import *
 
-def customerHome(request):
+def dashboard(request):
     categories = Category.objects.prefetch_related('subcategory_set__product_set').all()
     unique_categories = {}
     for category in categories:
@@ -10,6 +10,7 @@ def customerHome(request):
             unique_categories[category.category_name] = category
     category_list = list(unique_categories.values())
     all_data = []
+    
     processed_categories = set()
     for i in range(0, len(category_list), 4):
         box_categories = [
@@ -50,4 +51,12 @@ def customerHome(request):
                     'slide_range': range(1, len(product_batches))
                 })
                 processed_categories.add(slide_category)
-    return render(request, 'home.html', locals())
+    return render(request, 'dashboard.html', locals())
+
+def categoryProducts(request, category_name):
+    category_products = Product.objects.filter(sub_category__sub_category_name = category_name)
+    for product in category_products:
+        discount_percentage = float(product.discount_percentage) if product.discount_percentage else 0
+        discount_amount = float(product.price) * (discount_percentage / 100)
+        product.discounted_price = float(product.price) - discount_amount 
+    return render(request, 'category_products.html', locals())
